@@ -2,26 +2,28 @@
 
 namespace Tyleo
 {
+    namespace
+    {
+        class MultistreamEnd{};
+    }
+
     template <typename TCurrent, typename ... TTail>
     class Multistream :
-        private Multistream<TTail ...>
+        private Multistream<TCurrent>, private Multistream<TTail ...>
     {
     public:
         Multistream(TCurrent & currentStream, TTail & ... tailStreams) :
-            _stream{ currentStream },
+            Multistream<TCurrent>::Multistream(currentStream),
             Multistream<TTail ...>::Multistream(tailStreams ...)
         {}
 
         template <typename TOutput>
         Multistream<TCurrent, TTail ...> & operator << (const TOutput & output)
         {
-            _stream << output;
+            Multistream<TCurrent>::operator<<(output);
             Multistream<TTail ...>::operator<<(output);
             return *this;
         }
-
-    private:
-        TCurrent & _stream;
     };
 
     template <typename TCurrent>
@@ -33,7 +35,7 @@ namespace Tyleo
         {}
 
         template <typename TOutput>
-        Multistream<TCurrent> & operator << (TOutput & output)
+        Multistream<TCurrent> & operator << (const TOutput & output)
         {
             _stream << output;
             return *this;
@@ -43,9 +45,23 @@ namespace Tyleo
         TCurrent & _stream;
     };
 
-    template <typename TCurrent, typename ... TTail>
-    Multistream<TCurrent, TTail ...> MakeMultistream(TCurrent & currentStream, TTail & ... tailStreams)
+    template <>
+    class Multistream<MultistreamEnd>
     {
-        return Multistream<TCurrent, TTail ...>{currentStream, tailStreams ...};
+    public:
+        Multistream(MultistreamEnd & multistreamEnd)
+        {}
+
+        template <typename TOutput>
+        Multistream<MultistreamEnd> & operator << (const TOutput & output)
+        {
+            return *this;
+        }
+    };
+
+    template <typename TCurrent, typename ... TTail>
+    Multistream<TCurrent, TTail ..., MultistreamEnd> MakeMultistream(TCurrent & currentStream, TTail & ... tailStreams)
+    {
+        return Multistream<TCurrent, TTail ..., MultistreamEnd>{ currentStream, tailStreams ..., MultistreamEnd{} };
     }
 }

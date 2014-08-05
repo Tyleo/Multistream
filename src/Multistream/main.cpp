@@ -8,8 +8,16 @@ using namespace Tyleo;
 
 int main()
 {
-    ofstream fileStream = ofstream{ "Output.txt" };
+    auto outputFilestream = ofstream{ "OutputFile.txt" };
+    auto errorFilestream = ofstream{ "ErrorFile.txt" };
 
-    auto multistream = MakeMultistream(cout, fileStream);
-    multistream << "Hello World!";
+    auto outputMultistream = MakeMultistream(cout, outputFilestream);
+    auto errorMultistream = MakeMultistream(cout, errorFilestream);
+
+    cout << std::endl;
+    errorFilestream << std::endl;
+    outputMultistream << "Hello";
+    //outputMultistream << "Hello World!" << endl;
+    //errorMultistream << "Error!";// << "\n";
+
 }
