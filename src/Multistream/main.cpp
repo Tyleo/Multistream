@@ -9,15 +9,15 @@ using namespace Tyleo;
 int main()
 {
     auto outputFilestream = ofstream{ "OutputFile.txt" };
-    auto errorFilestream = ofstream{ "ErrorFile.txt" };
+    // auto errorFilestream = ofstream{ "ErrorFile.txt" };
 
-    auto outputMultistream = MakeMultistream(cout, outputFilestream);
-    auto errorMultistream = MakeMultistream(cout, errorFilestream);
+    auto outputMultistream = MakeMultistream(cout, outputFilestream, cout);
+    //auto errorMultistream = MakeMultistream(cout, errorFilestream);
 
     cout << std::endl;
-    errorFilestream << std::endl;
-    outputMultistream << "Hello";
-    //outputMultistream << "Hello World!" << endl;
-    //errorMultistream << "Error!";// << "\n";
+    //errorFilestream << std::endl;
+    outputMultistream << "Hello" << std::endl;
+    outputMultistream << "Hello World!" << std::endl;
+    //errorMultistream << "Error!" << "\n";
 
 }
